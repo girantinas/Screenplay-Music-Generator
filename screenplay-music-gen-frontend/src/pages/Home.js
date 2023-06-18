@@ -27,14 +27,13 @@ const Home = () => {
 
     const submitScreenplayText = () => {
         setIsDataFetched(false);
-        axios.post('http://localhost:8000/screenplay-input/', {
+        axios.post('http://localhost:8000/smart-screenplay-input/', {
             'text': screenplayInput
+        }, {
+          responseType: 'blob'
         }).then((response) => {
             setIsDataFetched(true);
-            console.log(response)
-            console.log(response.data)
-            setMusicRecordings(response.data)
-
+      setMusicRecordings(response.data)
           }, (error) => {
             console.log(error);
           });
@@ -99,8 +98,7 @@ const Home = () => {
             )
         )} */}
         {!isDataFetched ? <CircularProgress /> : 
-        // <AudioPlayer item={musicRecordings} />
-        <h1>hi</h1>
+        <AudioPlayer item={musicRecordings}></AudioPlayer>
       }
 
         </Stack>
