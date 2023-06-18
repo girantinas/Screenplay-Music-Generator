@@ -61,7 +61,10 @@ const Home = () => {
   }
 
   return (
-    <div>
+
+    <div       style={{
+      backgroundColor: '#1d1050',
+    }}>
       <Box
         display="flex"
         justifyContent="flex-end"
@@ -84,11 +87,21 @@ const Home = () => {
           {/* <FormLabel>Enter Name</FormLabel> */}
           <FormControl>
             <Box display="flex" justifyContent="center" m={1} alignItems="center">
-
               <TextField id="outlined-basic"
-                label="Screenplay Text"
+                label="start typing..."
+                rows={10}
                 variant="outlined"
-                style={{ width: '1000px' }}
+                InputLabelProps={{
+                  style: {
+                    color: 'white',
+                  },
+                }}
+                InputProps={{
+                  style: {color: 'white',
+                }
+              }}
+                style={{ width: '500px'
+              }}
                 multiline
                 onChange={(e) => setScreenplayInput(e.target.value)} />
             </Box>
