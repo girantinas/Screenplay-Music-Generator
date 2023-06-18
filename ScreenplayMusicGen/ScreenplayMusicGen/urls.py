@@ -20,5 +20,5 @@ from core.views import *
   
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('wel/', ScreenplayInputView.as_view(), name="Screenplay Input"),
+    path('screenplay-input/', ScreenplayInputView.as_view(), name="Screenplay Input"),
 ]
