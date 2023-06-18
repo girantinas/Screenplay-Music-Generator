@@ -26,5 +26,5 @@ class ScreenplayInputView(APIView):
     def generate_music(text):
         # TODO: Add ML
         # Invoke Slurm to do so
-        filename = "/Users/rohaga/Documents/CalHacks/Screenplay-Music-Generator/ScreenplayMusicGen/test/ES_Mindful Endeavors - Amaranth Cove.mp3"
+        filename = "./test/ES_Mindful Endeavors - Amaranth Cove.mp3"
         return filename
