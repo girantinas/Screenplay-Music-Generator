@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { TextField, FormControl } from '@mui/material';
 import Stack from '@mui/material/Stack';
@@ -9,20 +9,26 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
 import InfoIcon from '@mui/material/Icon';
-import PromptItem from '../components/PromptItem';
+import FormRow from '@mui/material/FormControl'
 import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
+  class Prompt {
+    constructor(text) {
+      this.text = text
+      this.selected = false;
+    }
+  }
+
   const navigate = useNavigate();
-  const [prompts, setPrompts] = useState([""]);
-  const [selectedPrompts, setSelectedPrompts] = useState([-1]);
+  const [prompts, setPrompts] = useState([new Prompt("")]);
+  const [selectedPrompts, setSelectedPrompts] = useState([new Prompt("")])
   const [musicSrc, setMusicSrc] = useState("");
   const [screenplayInput, setScreenplayInput] = useState("");
   const [isAudioFetched, setIsAudioFetched] = useState(false);
   const [isAudioFetching, setIsAudioFetching] = useState(false);
   const [isBlocksFetched, setIsBlocksFetched] = useState(false);
   const [isBlocksFetching, setIsBlocksFetching] = useState(false);
-
 
   const handleClick = () => {
     // Navigate to a different route when the button is clicked
@@ -45,7 +51,8 @@ const Home = () => {
     setIsBlocksFetched(false);
     setIsBlocksFetching(true);
     axios.post('http://localhost:8000/advanced-screenplay-input/', { 'text': screenplayInput }, { mode: 'cors' }).then((response) => {
-      setPrompts(response.data.split("*"))
+      console.log(response.data.split("*").map((v) => new Prompt(v)).map((v) => v.text))
+      setPrompts(response.data.split("*").map((v) => new Prompt(v)))
       setIsBlocksFetched(true);
       setIsBlocksFetching(false);
     }, (error) => {
@@ -54,7 +61,6 @@ const Home = () => {
   }
 
   return (
-
     <div>
       <Box
         display="flex"
@@ -94,11 +100,35 @@ const Home = () => {
             </Box>}
 
           </FormControl>
-          {isBlocksFetched && <Stack container spacing={2}>
-            {prompts.map((prompt, _) => <PromptItem prompt={prompt} />)}
-          </Stack>}
+          {isBlocksFetched && 
+          <Stack container spacing={5}>
+              <Box xs={4} border={1}>
+                {prompts.filter(prompts => !prompts.selected).map((prompt, i) => {
+                  return (<Box item xs={4} border={1} width='30%' onClick={() => {
+                  let ind = prompts.indexOf(prompt);
+                  prompt.selected = true;
+                  prompts[ind] = prompt;
+                  selectedPrompts.push(prompt);
+                  setSelectedPrompts(selectedPrompts);
+                  setPrompts(prompts);
+                  }}>{prompt.text}</Box>)})}
+              </Box>
+
+              <Box xs={4} border={1}>
+              {selectedPrompts.filter(p => p.text !== "").map((prompt, i) => {
+                  return (<Box item xs={4} border={1} onClick={() => {
+                  let ind = prompts.indexOf(prompt);
+                  prompt.selected = false;
+                  prompts[ind] = prompt;
+                  let ind2 = selectedPrompts.indexOf(prompt);
+                  selectedPrompts.splice(ind2, 1);
+                  setSelectedPrompts(selectedPrompts);
+                  setPrompts(prompts);
+                  }}>{prompt.text}</Box>)})}
+              </Box>
+            </Stack>}
           {isBlocksFetching && !isBlocksFetched && <CircularProgress />}
-          {isBlocksFetched && selectedPrompts.length > 1 && <Button size='large' onClick={submitAdvancedScreenplayText}>Generate</Button>}
+          {isBlocksFetched && prompts.filter((p) => p.selected).length > 0 && <Button size='large' onClick={submitAdvancedScreenplayText}>Generate</Button>}
           {isAudioFetched && <audio controls src={musicSrc} />}
           {isAudioFetching && !isAudioFetched && <CircularProgress />}
         </Stack>
