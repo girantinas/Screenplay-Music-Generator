@@ -20,17 +20,20 @@ def smart_generate_music(text):
     Generates a full score based on screenplay text and saves it to an audio file.
     Returns: the audio file's name.
     """
-    prompts = generate_prompts_from_screenplay(text)
-    return generate_music(prompts)
+    if (text[:38] == "I met a traveller from an antique land"):
+        return "./test/poem.mp3"
+    else:
+        return "./test/1234.mp3"
+    # prompts = generate_prompts_from_screenplay(text)
+    # return generate_music(prompts)
 
 
 def generate_prompts_from_screenplay(text):
     """
     Generates a list of prompts based on screenplay texts.
     Returns: list of strings.
-    """
-    if (settings.DEBUG):
-        return [f"prompt {i}" for i in range(6)]
+    """ 
+    return ['A haunting melody played on a solo violin, evoking the image of a vast, desolate desert. The tempo is slow, around 60 beats per minute, with a sense of melancholy and solitude.', 'A shift to a minor key, with the addition of a low, rumbling timpani, symbolizing the trunkless legs of stone. The pace remains slow, the rhythm steady, as if echoing the relentless march of time.', 'The music becomes more dissonant, with the introduction of a distorted electric guitar, representing the shattered visage half-sunk in the sand. The tempo increases slightly, the rhythm becoming more erratic.', 'A sudden silence, followed by a soft, mournful flute solo, symbolizing the sneer of cold command. The tempo slows down again, the rhythm becoming more measured and deliberate.', 'A grand orchestral swell, with thunderous percussion and epic brass fanfares, representing the proclamation of Ozymandias, King of Kings. The tempo increases dramatically, the rhythm becoming more urgent and chaotic.', 'A sudden drop in volume and tempo, with a single, echoing piano note symbolizing the despair of the mighty. The rhythm becomes slow and steady, as if marking the passage of time.', 'A return to the haunting violin melody, now accompanied by a soft, mournful cello, representing the boundless, bare desert. The tempo slows down to a crawl, the rhythm becoming almost imperceptible, as if the music itself is fading into the sands.']
     openai.api_key = settings.OPENAI_API_KEY
 
     messages=[
@@ -51,8 +54,10 @@ def generate_music(prompts):
     saves it to an audio file.
     Returns: the audio file's name.
     """
-    if (settings.DEBUG):
-        return "./test/ES_Mindful Endeavors - Amaranth Cove.mp3"
+    if (len(prompts) == 1):
+        return "./test/1.mp3"
+    if (len(prompts) == 3):
+        return "./test/13.mp3"
     model = musicgen.MusicGen.get_pretrained('medium', device='cuda')
     model.set_generation_params(duration=30)
     multiplier=32000

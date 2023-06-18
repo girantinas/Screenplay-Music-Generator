@@ -12,6 +12,8 @@ class SmartScreenplayInputView(APIView):
     serializer_class = ScreenplayInputSerializer
 
     def post(self, request):
+        if (not request.body):
+            return
         serializer = ScreenplayInputSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
