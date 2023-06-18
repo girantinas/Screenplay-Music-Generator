@@ -2,6 +2,7 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from . models import *
 from rest_framework.response import Response
+from django.http import HttpResponse
 from . serializer import *
 import os
   
@@ -14,11 +15,11 @@ class ScreenplayInputView(APIView):
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             audiofile = ScreenplayInputView.generate_music(serializer.data)
-            f = open(audiofile, "rb") 
-            response = Response()
-            response.write(f.read())
-            response['Content-Type'] ='audio/mp3'
+            response = HttpResponse()
+            with open(audiofile, "rb") as f:
+                response.write(f.read())
             response['Content-Length'] = os.path.getsize(audiofile)
+            response['Content-Disposition'] = 'attachment; filename="' + audiofile + '"'
             return response
 
     @staticmethod
