@@ -1,110 +1,110 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
-import { TextField } from '@mui/material';
+import { TextField, FormControl } from '@mui/material';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
-import { FormControl } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
 import Title from '../components/Title';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
 import InfoIcon from '@mui/material/Icon';
+import PromptItem from '../components/PromptItem';
 import { useNavigate } from 'react-router-dom';
-import AudioPlayer from '../components/AudioPlayer';
-  
+
 const Home = () => {
   const navigate = useNavigate();
-    const [musicRecordings, setMusicRecordings] = useState([]);
-    const [screenplayInput, setScreenplayInput] = useState("");
-    const [isDataFetched, setIsDataFetched] = useState(true)
-    
+  const [prompts, setPrompts] = useState([""]);
+  const [selectedPrompts, setSelectedPrompts] = useState([-1]);
+  const [musicSrc, setMusicSrc] = useState("");
+  const [screenplayInput, setScreenplayInput] = useState("");
+  const [isAudioFetched, setIsAudioFetched] = useState(false);
+  const [isAudioFetching, setIsAudioFetching] = useState(false);
+  const [isBlocksFetched, setIsBlocksFetched] = useState(false);
+  const [isBlocksFetching, setIsBlocksFetching] = useState(false);
 
-    const handleClick = () => {
-      // Navigate to a different route when the button is clicked
-      navigate('/about');
-    };
 
-    const submitScreenplayText = () => {
-        setIsDataFetched(false);
-        axios.post('http://localhost:8000/smart-screenplay-input/', {
-            'text': screenplayInput
-        }, {
-          responseType: 'blob'
-        }).then((response) => {
-            setIsDataFetched(true);
-      setMusicRecordings(response.data)
-          }, (error) => {
-            console.log(error);
-          });
-    }
+  const handleClick = () => {
+    // Navigate to a different route when the button is clicked
+    navigate('/about');
+  };
 
-    useEffect(() =>  {
-        // let data;
-        // axios.get('http://localhost:8000/wel/')
-        // .then(res => {
-        //     data = res.data;
-        //     this.setText(data);
-        // })
-        // .catch(err => {})
+  const submitSmartScreenplayText = () => {
+    setIsAudioFetched(false);
+    setIsAudioFetching(true);
+    axios.post('http://localhost:8000/smart-screenplay-input/', { 'text': screenplayInput }, { responseType: 'blob', mode: 'cors' }).then((response) => {
+      setMusicSrc(window.URL.createObjectURL(new Blob([response.data])));
+      setIsAudioFetched(true);
+      setIsAudioFetching(false);
+    }, (error) => {
+      console.log(error);
     });
-  
-    return(
+  }
 
-      <div>
-            <Box
-      display="flex"
-      justifyContent="flex-end"
-      paddingTop={2}
-      paddingRight={2}
-    >
-      <IconButton aria-label="About" onClick={handleClick}>
-        <InfoIcon />About
-      </IconButton>
-    </Box>
-            <Grid
-      container
-      justifyContent="center"
-      alignItems="center"
-      style={{ minHeight: '100vh' }}
-    >
-        <Stack>
+  const submitAdvancedScreenplayText = () => {
+    setIsBlocksFetched(false);
+    setIsBlocksFetching(true);
+    axios.post('http://localhost:8000/advanced-screenplay-input/', { 'text': screenplayInput }, { mode: 'cors' }).then((response) => {
+      setPrompts(response.data.split("*"))
+      setIsBlocksFetched(true);
+      setIsBlocksFetching(false);
+    }, (error) => {
+      console.log(error);
+    });
+  }
+
+  return (
+
+    <div>
+      <Box
+        display="flex"
+        justifyContent="flex-end"
+        paddingTop={2}
+        paddingRight={2}
+      >
+        <IconButton aria-label="About" onClick={handleClick}>
+          <InfoIcon />About
+        </IconButton>
+      </Box>
+      <Grid
+        container
+        justifyContent="center"
+        alignItems="center"
+        style={{ minHeight: '100vh' }}
+      >
+        <Stack spacing={2}>
           <Title />
 
-        <FormControl>
-    {/* <FormLabel>Enter Name</FormLabel> */}
-    <Box display="flex" justifyContent="center">
-    <TextField id="outlined-basic" 
-    label="Screenplay Text" 
-    variant="outlined" 
-    style={{ width: '1000px' }}
-      multiline
-    onChange={ (e) => setScreenplayInput(e.target.value) }/>
-      </Box>
-    <Button onClick={submitScreenplayText}>Submit</Button>
-</FormControl>
-            {/* {text.map((text, id) =>  (
-            <div key={id}>
-            <div >
-                  <div >
-                        <h1>{text.text} </h1>
-                        <footer >--- by
-                        <cite title="Source Title">
-                        {text.text}</cite>
-                        </footer>
-                  </div>
-            </div>
-            </div>
-            )
-        )} */}
-        {!isDataFetched ? <CircularProgress /> : 
-        <AudioPlayer item={musicRecordings}></AudioPlayer>
-      }
+          {/* <FormLabel>Enter Name</FormLabel> */}
+          <FormControl>
+            <Box display="flex" justifyContent="center" m={1} alignItems="center">
 
+              <TextField id="outlined-basic"
+                label="Screenplay Text"
+                variant="outlined"
+                style={{ width: '1000px' }}
+                multiline
+                onChange={(e) => setScreenplayInput(e.target.value)} />
+            </Box>
+
+            {!isBlocksFetching && !isBlocksFetched && <Box display="flex" justifyContent="center">
+              {/* TODO: Make into settings panel. */}
+              <Button size='large' onClick={submitSmartScreenplayText}>Smart Music Generation</Button>
+              <Button size='large' onClick={submitAdvancedScreenplayText}>Customize</Button>
+            </Box>}
+
+          </FormControl>
+          {isBlocksFetched && <Stack container spacing={2}>
+            {prompts.map((prompt, _) => <PromptItem prompt={prompt} />)}
+          </Stack>}
+          {isBlocksFetching && !isBlocksFetched && <CircularProgress />}
+          {isBlocksFetched && selectedPrompts.length > 1 && <Button size='large' onClick={submitAdvancedScreenplayText}>Generate</Button>}
+          {isAudioFetched && <audio controls src={musicSrc} />}
+          {isAudioFetching && !isAudioFetched && <CircularProgress />}
         </Stack>
-        </Grid>
-      </div> 
-      );
-  }
-  
+      </Grid>
+    </div>
+  );
+}
+
 export default Home;

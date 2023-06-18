@@ -29,7 +29,9 @@ def generate_prompts_from_screenplay(text):
     Generates a list of prompts based on screenplay texts.
     Returns: list of strings.
     """
-    openai.api_key = settings.OPEN_API_KEY
+    if (settings.DEBUG):
+        return [f"prompt {i}" for i in range(6)]
+    openai.api_key = settings.OPENAI_API_KEY
 
     messages=[
     {'role': 'system', 'content': SYSTEM_MESSAGE},
@@ -49,6 +51,8 @@ def generate_music(prompts):
     saves it to an audio file.
     Returns: the audio file's name.
     """
+    if (settings.DEBUG):
+        return "./test/ES_Mindful Endeavors - Amaranth Cove.mp3"
     model = musicgen.MusicGen.get_pretrained('medium', device='cuda')
     model.set_generation_params(duration=30)
     multiplier=32000

@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
+from rest_framework.response import Response
 from . models import *
 from django.http import HttpResponse
 from . serializer import *
@@ -14,9 +15,10 @@ class SmartScreenplayInputView(APIView):
         serializer = ScreenplayInputSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
-            return audiofile_to_response("./test/ES_Mindful Endeavors - Amaranth Cove.mp3")
-            # audiofile = smart_generate_music(serializer.data)
-            # return audiofile_to_response(audiofile)
+            audiofile = smart_generate_music(serializer.data['text'])
+            res =  audiofile_to_response(audiofile)
+            res['Access-Control-Allow-Origin'] = '*'
+            return res
         
 class AdvancedScreenplayInputView(APIView):
 
@@ -25,8 +27,8 @@ class AdvancedScreenplayInputView(APIView):
         serializer = ScreenplayInputSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
-            prompts = generate_prompts_from_screenplay(serializer.data)
-            return HttpResponse(prompts)
+            prompts = generate_prompts_from_screenplay(serializer.data['text'])
+            return HttpResponse('*'.join(prompts))
         
 
 class StoryOrderingView(APIView):
@@ -36,5 +38,7 @@ class StoryOrderingView(APIView):
         serializer = StoryOrderingSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
-            audiofile = generate_music(serializer.data.split("#"))
-            return audiofile_to_response(audiofile)
+            audiofile = generate_music(serializer.data['stories'].split("*"))
+            res = audiofile_to_response(audiofile)
+            res['Access-Control-Allow-Origin'] = '*'
+            return res
