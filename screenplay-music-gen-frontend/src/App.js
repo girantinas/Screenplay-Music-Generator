@@ -1,46 +1,21 @@
 import React from 'react';
-import axios from 'axios';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Home from './pages/Home';
+import About from './pages/About';
   
-class App extends React.Component {
+const App = () =>  {
   
-    state = {
-        text: [],
-    }
-  
-    componentDidMount() {
-  
-        let data;
-  
-        axios.get('http://localhost:8000/wel/')
-        .then(res => {
-            data = res.data;
-            this.setState({
-                text: data    
-            });
-        })
-        .catch(err => {})
-    }
-  
-  render() {
+
     return(
-      <div>
-            {this.state.text.map((text, id) =>  (
-            <div key={id}>
-            <div >
-                  <div >
-                        <h1>{text.text} </h1>
-                        <footer >--- by
-                        <cite title="Source Title">
-                        {text.text}</cite>
-                        </footer>
-                  </div>
-            </div>
-            </div>
-            )
-        )}
-      </div>
+        <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />}>
+          <Route path="/about" element={<About />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
       );
-  }
+  
 }
   
 export default App;
