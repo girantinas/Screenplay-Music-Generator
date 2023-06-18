@@ -10,12 +10,19 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
 import InfoIcon from '@mui/material/Icon';
-
+import { useNavigate } from 'react-router-dom';
   
 const Home = () => {
+  const navigate = useNavigate();
     const [text, setText] = useState([]);
     const [screenplayInput, setScreenplayInput] = useState("");
     const [dataFetched, setDataFetched] = useState(true)
+
+
+    const handleClick = () => {
+      // Navigate to a different route when the button is clicked
+      navigate('/about');
+    };
 
     const submitScreenplayText = () => {
         setDataFetched(false);
@@ -48,7 +55,7 @@ const Home = () => {
       paddingTop={2}
       paddingRight={2}
     >
-      <IconButton aria-label="About">
+      <IconButton aria-label="About" onClick={handleClick}>
         <InfoIcon />About
       </IconButton>
     </Box>
