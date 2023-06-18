@@ -29,12 +29,12 @@ class AdvancedScreenplayInputView(APIView):
             return HttpResponse(prompts)
         
 
-# class StoryOrderingView(APIView):
+class StoryOrderingView(APIView):
 
-#     serializer_class = StoryOrderingSerializer
-#     def post(self, request):
-#         serializer = StoryOrderingSerializer(data=request.data)
-#         if serializer.is_valid(raise_exception=True):
-#             serializer.save()
-#             audiofile = generate_music(serializer.data)
-#             return audiofile_to_response(audiofile)
+    serializer_class = StoryOrderingSerializer
+    def post(self, request):
+        serializer = StoryOrderingSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            audiofile = generate_music(serializer.data.split("#"))
+            return audiofile_to_response(audiofile)
