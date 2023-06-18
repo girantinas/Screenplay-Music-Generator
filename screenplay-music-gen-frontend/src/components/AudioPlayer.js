@@ -1,23 +1,24 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 
-// audioFile -> path to mp3
-const AudioPlayer = (audioFile) => {
-  const [isPlaying, setIsPlaying] = useState(false);
+const AudioPlayer = ({ audioURL }) => {
+  const audioRef = useRef(null);
 
-  const handlePlay = () => {
-    const audio = new Audio(audioFile);
-    if (!isPlaying) {
-      audio.play();
-      setIsPlaying(true);
-    } else {
-      audio.pause();
-      setIsPlaying(false);
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.src = audioURL;
+    }
+  }, [audioURL]);
+
+  const playAudio = () => {
+    if (audioRef.current) {
+      audioRef.current.play();
     }
   };
 
   return (
     <div>
-      <button onClick={handlePlay}>{isPlaying ? 'Pause' : 'Play'}</button>
+      <button onClick={playAudio}>Play Audio</button>
+      <audio ref={audioRef} controls />
     </div>
   );
 };

@@ -11,13 +11,14 @@ import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
 import InfoIcon from '@mui/material/Icon';
 import { useNavigate } from 'react-router-dom';
+import AudioPlayer from '../components/AudioPlayer';
   
 const Home = () => {
   const navigate = useNavigate();
-    const [text, setText] = useState([]);
+    const [musicRecordings, setMusicRecordings] = useState([]);
     const [screenplayInput, setScreenplayInput] = useState("");
-    const [dataFetched, setDataFetched] = useState(true)
-
+    const [isDataFetched, setIsDataFetched] = useState(true)
+    
 
     const handleClick = () => {
       // Navigate to a different route when the button is clicked
@@ -25,12 +26,15 @@ const Home = () => {
     };
 
     const submitScreenplayText = () => {
-        setDataFetched(false);
+        setIsDataFetched(false);
         axios.post('http://localhost:8000/screenplay-input/', {
             'text': screenplayInput
         }).then((response) => {
-            setDataFetched(true);
-            console.log(response);
+            setIsDataFetched(true);
+            console.log(response)
+            console.log(response.data)
+            setMusicRecordings(response.data)
+
           }, (error) => {
             console.log(error);
           });
@@ -94,7 +98,10 @@ const Home = () => {
             </div>
             )
         )} */}
-        {!dataFetched ? <CircularProgress /> : <h1>yes</h1>}
+        {!isDataFetched ? <CircularProgress /> : 
+        // <AudioPlayer item={musicRecordings} />
+        <h1>hi</h1>
+      }
 
         </Stack>
         </Grid>
