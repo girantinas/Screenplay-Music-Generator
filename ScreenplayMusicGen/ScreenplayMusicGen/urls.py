@@ -20,5 +20,6 @@ from core.views import *
   
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('screenplay-input/', ScreenplayInputView.as_view(), name="Screenplay Input"),
+    path('smart-screenplay-input/', SmartScreenplayInputView.as_view(), name="Smart Screenplay Input"),
+    # path('advanced-screenplay-input/', AdvancedScreenplayInputView.as_view(), name="Advanced Screenplay Input")
 ]
