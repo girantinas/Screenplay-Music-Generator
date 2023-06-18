@@ -9,7 +9,7 @@ Built with GPT-4, MusicGen, React, Django, and PyTorch
 ## Getting Started
 To start the backend, install Django using
 ```
-pip install django djangorestframework django-cors-headers
+pip install -r requirements.txt
 ```
 and start the server using 
 ```
